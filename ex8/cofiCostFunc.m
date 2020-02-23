@@ -40,19 +40,38 @@ Theta_grad = zeros(size(Theta));
 %                     partial derivatives w.r.t. to each element of Theta
 %
 
+% Cost function implementation
+
+J = 0.5 * sum(sum(R.*( (Theta * X')' - Y).^2));
+
+% Gradient update implementation
+
+for i = 1:size(X,1)
+    idx = find(R(i,:)==1);
+    
+    X_grad(i,:) = (X(i,:)*Theta(idx,:)' - Y(i,idx)) * Theta(idx,:);
+end
 
 
+for j = 1:size(Theta,1)
+    idx = find(R(:,j)==1);
+    
+    Theta_grad(j,:) = (X(idx,:)*Theta(j,:)' - Y(idx,j))' * X(idx,:);
+end
+
+% Adding regularization
+
+J = J + 0.5*lambda*sum(sum(Theta.^2)) + 0.5*lambda*sum(sum(X.^2));
 
 
+for i = 1:size(X,1)
+    X_grad(i,:) = X_grad(i,:) + lambda * X(i,:);
+end
 
 
-
-
-
-
-
-
-
+for j = 1:size(Theta,1)
+    Theta_grad(j,:) = Theta_grad(j,:) + lambda * Theta(j,:);
+end
 
 
 % =============================================================
